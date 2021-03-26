@@ -32,10 +32,9 @@
 
 <script>
 
-import request from '@/helpers/request'
+import { mapGetters, mapActions} from 'vuex'
 
 export default {
-  name: 'Login',
   data() {
     return {
       isShowLogin: true,
@@ -55,6 +54,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      loginUser:'login',
+      registerUser:'register'
+    }),
+
     showLogin() {
       this.isShowLogin = true
       this.isShowRegister = false
@@ -75,17 +79,19 @@ export default {
         return
       }
 
-      this.register.isError = false
-      this.register.notice = ''
-
-      console.log('开始注册,用户名是：', this.register.username, '密码是：', this.register.password)
-      request('/CloudNotes/register', 'POST',
-        {
+      this.registerUser({
           username: this.register.username,
           password: this.register.password
-        }).then(data=>{
-        console.log(data)
+        }).then(()=>{
+        this.register.isError = false
+        this.register.notice = ''
+        this.$router.push({path:'notebooks'})
+      }).catch(data => {
+        this.register.isError = true
+        this.register.notice = data.msg
       })
+
+      console.log(this.registerUser.username);
     },
     onLogin() {
       if (!/^[a-zA-Z_0-9_\u4e00-\u9fa5]{3,15}$/.test(this.login.username)) {
@@ -98,17 +104,17 @@ export default {
         this.login.notice = '密码长度为6~16个字符'
         return
       }
-      this.login.isError = false
-      this.login.notice = ''
-
-      console.log('开始登录,用户名是：', this.login.username, '密码是：', this.login.password)
-      request('/CloudNotes/login', 'POST',
-        {
+      this.loginUser({
           username: this.login.username,
           password: this.login.password
-        }).then(data=>{
-          console.log(data)
-        })
+        }).then(()=>{
+          this.login.isError = false
+          this.login.notice = ''
+          this.$router.push({path:'notebooks'})
+        }).catch(data => {
+          this.login.isError = true
+          this.login.notice = data.msg
+      })
     },
 
   }

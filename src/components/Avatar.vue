@@ -1,18 +1,31 @@
 <template>
-  <span :title="user.username">{{slug}}</span>
-  </template>
+  <span :title="username">{{ slug }}</span>
+</template>
 
 <script>
-   export default {
-    data() {
-        return {
-            user: {
-              username: 'hunger'
-            },
-          slug: 'H'
-        }
-      }
+import {mapGetters, mapActions} from 'vuex'
+
+export default {
+  data() {
+    return {}
+  },
+  created() {
+    this.setUser()
+  },
+
+  methods:{
+    ...mapActions({
+      'setUser':'checkLogin'
+    })
+  },
+
+  computed: {
+    ...mapGetters([
+      'username',
+      'slug'
+    ])
   }
+}
 </script>
 
 <style scoped>
